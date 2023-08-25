@@ -1,0 +1,26 @@
+{
+  "id": "inline-macro-execution",
+  "title": "Inline Macro Execution",
+  "description": "",
+  "authors": [
+    {
+      "name": "mesayah"
+    }
+  ],
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "10",
+    "verified": "11"
+  },
+  "esmodules": [
+    "scripts/inline-macro-execution.js"
+  ],
+  "styles": [
+    "css/inline-roll-cmd.css"
+  ],
+  "url": "replaced by workflow",
+  "manifest": "replaced by workflow",
+  "download": "replaced by workflow",
+  "changelog": "replaced by workflow",
+  "readme": "replaced by workflow"
+}
