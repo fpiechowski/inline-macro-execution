@@ -1,10 +1,13 @@
 {
   "id": "inline-macro-execution",
   "title": "Inline Macro Execution",
-  "description": "",
+  "description": "Create inline macro executions with arguments",
   "authors": [
     {
-      "name": "mesayah"
+      "name": "Mesayah",
+      "discord": "mesayah#5042",
+      "email": "f.piechowski@gmail.com",
+      "url": "https://github.com/fpiechowski"
     }
   ],
   "version": "1.0.0",
