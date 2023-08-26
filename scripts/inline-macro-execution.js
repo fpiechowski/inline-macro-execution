@@ -30,15 +30,24 @@ function macroExecutionEnricher(match, options) {
     InlineMacroExecution.log(false, "match", match);
 
     try {
-        const macroIdPlusArgs = match[2];
+        const macroIdPlusArgsString = match[2];
         const flavor = match[4];
 
-        InlineMacroExecution.log(false, "macroIdPlusArgs", macroIdPlusArgs, "flavor", flavor);
+        InlineMacroExecution.log(false, "macroIdPlusArgs", macroIdPlusArgsString, "flavor", flavor);
 
-        const title = macroIdPlusArgs;
+        const macroIdPlusArgs = macroIdPlusArgsString.split(" ");
+        const macroId = macroIdPlusArgs[0];
+        const args = macroIdPlusArgs.slice(1)
+            .map((s) => s.split("="))
+            .reduce(function (acc, entry) {
+                acc[entry[0]] = entry[1];
+                return acc;
+            }, {});
+        const macro = game.macros.get(macroId);
+        const title = `${macro.name}(${JSON.stringify(args)})`;
 
         InlineMacroExecution.log(false, "title", title, "flavor", flavor);
-        return macroExecutionButton(macroIdPlusArgs, title, flavor);
+        return macroExecutionButton(macroIdPlusArgsString, title, flavor);
     } catch (e) {
         InlineMacroExecution.log(`ERROR: ${e}`);
     }
