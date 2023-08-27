@@ -3,19 +3,21 @@
 ## Usage
 In any document add:
 ```
-[[/macroExec <macroId> <args>]]{flavor}
+[[/macroExec <macroName> <args>]]{flavor}
 ```
 to inline a link for macro execution with arguments, eg.
 ```
-[[/macroExec tImUWV1n6XbTcsyV actorId=7H3u64HL8HuefXJP skill=ste]]
+[[/macroExec "Roll Actor Skill" actorName="Test Actor" skill=ste]]
 ```
 where
-`tImUWV1n6XbTcsyV` is a macro ID for a macro with the following command:
+`Roll Actor Skill` is a macro name (must be quoted) for a macro with the following command:
 ```
-game.actors.get(scope.actorId).rollSkill(scope.skill);
+game.actors.get(scope.actorName).rollSkill(scope.skill);
 ```
-`7H3u64HL8HuefXJP` is an actor ID for some actor that can roll a skill check
+`Test Actor` is an actor ID for some actor that can roll a skill check
 
-`actorId` and `skill` are argument names that can be passed to the macro using `scope` object
+`actorName` and `skill` are argument names that can be passed to the macro using `scope` object
 
 `flavor` is the link's label
+
+If argument value contains whitespaces, wrap it in quotes `" "`.

@@ -14,7 +14,7 @@ class InlineMacroExecution {
 }
 
 Hooks.on("init", function () {
-    const rgx = /\[\[(\/macroExec\s)?(.*?)(]{2,3})(?:{([^}]+)})?/gi;
+    const rgx = /\[\[(\/macroExec)\s*(?:"([^"]*)"|(\S+))\s*(.*?)\s*(]{2,3})(?:{([^}]+)})?/gi;
     CONFIG.TextEditor.enrichers.push({
         pattern: rgx,
         enricher: macroExecutionEnricher,
@@ -30,50 +30,54 @@ function macroExecutionEnricher(match, options) {
     InlineMacroExecution.log(false, "match", match);
 
     try {
-        const macroIdPlusArgsString = match[2];
-        const flavor = match[4];
+        const macroName = match[2];
+        const argsString = match[4];
+        const flavor = match[6];
 
-        InlineMacroExecution.log(false, "macroIdPlusArgs", macroIdPlusArgsString, "flavor", flavor);
+        InlineMacroExecution.log(false, "macroName", macroName, "argsString", argsString, "flavor", flavor);
 
-        const macroIdPlusArgs = macroIdPlusArgsString.split(" ");
-        const macroId = macroIdPlusArgs[0];
-        const args = macroIdPlusArgs.slice(1)
-            .map((s) => s.split("="))
-            .reduce(function (acc, entry) {
-                acc[entry[0]] = entry[1];
-                return acc;
-            }, {});
-        const macro = game.macros.get(macroId);
-        const title = `${macro.name}(${JSON.stringify(args)})`;
+        const macro = game.macros.getName(macroName);
+        const title = `${macro.name}(${argsString})`;
 
         InlineMacroExecution.log(false, "title", title, "flavor", flavor);
-        return macroExecutionButton(macroIdPlusArgsString, title, flavor);
+        return macroExecutionButton(macroName, argsString, title, flavor);
     } catch (e) {
         InlineMacroExecution.log(`ERROR: ${e}`);
     }
 }
 
-function macroExecutionButton(macroIdPlusArgs, title, flavor) {
+function macroExecutionButton(macroName, argsString, title, flavor) {
     const a = document.createElement("a");
     a.classList.add("inline-macro-execution");
-    a.dataset.macroIdPlusArgs = macroIdPlusArgs;
+    a.dataset.macroName = macroName;
+    a.dataset.args = argsString;
     a.innerHTML = `<i class="fas fa-dice-d20"></i> ${flavor ?? title}`;
     return a;
 }
 
 async function onClick(event) {
-    event.preventDefault();
-    const a = event.currentTarget;
-    InlineMacroExecution.log(false, "a.dataset", a.dataset);
+    try {
+        event.preventDefault();
+        const a = event.currentTarget;
+        InlineMacroExecution.log(false, "a.dataset", a.dataset);
 
-    const macroIdPlusArgs = a.dataset.macroIdPlusArgs.split(" ");
-    const macroId = macroIdPlusArgs[0];
-    const args = macroIdPlusArgs.slice(1)
-        .map((s) => s.split("="))
-        .reduce(function (acc, entry) {
-            acc[entry[0]] = entry[1];
-            return acc;
-        }, {});
+        const macroName = a.dataset.macroName;
+        const argsString = a.dataset.args;
+        const argsRgx = /(\w+)=\s*(?:"([^"]*)"|(\S+))/g;
 
-    game.macros.get(macroId).execute(args);
+        const args = {};
+        let match;
+        while ((match = argsRgx.exec(argsString)) !== null) {
+            match
+            const key = match[1];
+            const value = match[2] ?? match[3];
+            args[key] = value;
+        }
+
+        game.macros.getName(macroName).execute(args);
+    } catch (e) {
+        InlineMacroExecution.log(false, "error", e);
+        ui.notifications.error(e.error);
+        throw e;
+    }
 }
